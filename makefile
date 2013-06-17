@@ -14,7 +14,12 @@ LDFLAGS = -Tflash.ld -Xlinker --gc-sections -lc -nostartfiles
 DEFINECPU = $(MCU_OPTIONS) -DMCU_$(MCU) -D$(MCU_FAMILY) -fno-exceptions 
 EXTRACPPFLAGS = -fno-rtti
 RUNTIMELIB = 
-EXTRAINCDIRS = $(SRCDIR) $(SRCDIR)/libstm32f2
+EXTRAINCDIRS = $(SRCDIR) $(SRCDIR)/libstm32f2 \
+	       $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/inc \
+	       $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Class/cdc/inc \
+	       $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/inc \
+	       $(SRCDIR)/libstm32f2/VCP
+
 
 # Output format. (can be srec, ihex, binary)
 FORMAT = ihex
@@ -34,6 +39,7 @@ SRC = $(SRCDIR)/driver_display.c \
       $(SRCDIR)/driver_power.c \
       $(SRCDIR)/driver_adc.c \
       $(SRCDIR)/driver_rtc.c \
+      $(SRCDIR)/driver_usb.c \
       $(SRCDIR)/pins.c \
       $(SRCDIR)/libstm32f2/stm32f2xx_adc.c       \
       $(SRCDIR)/libstm32f2/stm32f2xx_can.c       \
@@ -67,7 +73,19 @@ SRC = $(SRCDIR)/driver_display.c \
       $(SRCDIR)/libstm32f2/stm32f2xx_usart.c     \
       $(SRCDIR)/libstm32f2/stm32f2xx_wwdg.c      \
       $(SRCDIR)/libstm32f2/system_stm32f2xx.c    \
-      $(SRCDIR)/libstm32f2/syscalls.c
+      $(SRCDIR)/libstm32f2/syscalls.c            \
+      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src/usbd_core.c \
+      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src/usbd_ioreq.c \
+      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src/usbd_req.c \
+      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.c \
+      $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src/usb_dcd.c \
+      $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src/usb_core.c \
+      $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src/usb_dcd_int.c \
+      $(SRCDIR)/libstm32f2/VCP/usb_bsp.c \
+      $(SRCDIR)/libstm32f2/VCP/usbd_cdc_vcp.c \
+      $(SRCDIR)/libstm32f2/VCP/usbd_desc.c \
+      $(SRCDIR)/libstm32f2/VCP/usbd_usr.c
+
 
 LIBDIR     = libraries
 SRCDIR = src
@@ -321,6 +339,10 @@ clean_list :
 # Create object files directory
 $(shell mkdir -p $(OBJDIR)/$(SRCDIR) 2>/dev/null)
 $(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2 2>/dev/null)
+$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src 2>/dev/null)
+$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Class/cdc/src 2>/dev/null)
+$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src 2>/dev/null)
+$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/VCP 2>/dev/null)
 
 # Listing of phony targets.
 .PHONY : all begin finish end sizebefore sizeafter build elf hex eep lss sym clean clean_list program touchmain

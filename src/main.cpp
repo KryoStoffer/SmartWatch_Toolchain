@@ -9,6 +9,7 @@ extern "C" {
   #include "driver_rtc.h"
   #include "driver_display.h"
   #include "driver_power.h"
+  #include "driver_usb.h"
 }
  
 // Include our Arduino style C++ objects
