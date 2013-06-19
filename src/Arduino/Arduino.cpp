@@ -1,33 +1,25 @@
 // Davey Taylor, Arduino Verkstad AB
-// Sony SmartWatch startup procedure
-
-#include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
+// Sony SmartWatch startup procedure for Arduino-type build (make sketch)
 
 // Include our drivers and libs
-#include "Arduino.h"
-#include "driver_i2c.h"
-#include "driver_adc.h"
-#include "driver_rtc.h"
-#include "driver_display.h"
-#include "driver_power.h"
-#include "driver_touch.h"
-#include "driver_usb.h"
+#include <stdarg.h>
+#include "../Arduino.h"
+#include "../driver_i2c.h"
+#include "../driver_adc.h"
+#include "../driver_rtc.h"
+#include "../driver_display.h"
+#include "../driver_power.h"
+#include "../driver_touch.h"
+#include "../driver_usb.h"
  
 // Include our Arduino style C++ objects
 // This should eventually be moved to the makefile
-#include "driver_display.cpp"
-#include "driver_power.cpp"
-#include "driver_rtc.cpp"
-#include "driver_touch.cpp"
-#include "driver_accel.cpp"
-
-// USB pins
-#define USB_DP        (&PIN_PA12)
-#define USB_DM        (&PIN_PA11)
+#include "OLED.cpp"
+#include "Battery.cpp"
+#include "CPU.cpp"
+#include "DateTime.cpp"
+#include "Touch.cpp"
+#include "Movement.cpp"
 
 /*
 // This can be called from anywhere and is good to use as a test
@@ -45,33 +37,7 @@ void buzztest(void) {
 
 static const char uHex[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
-// System initialization
-void init() {
-  // Initializes all pins to their default settings (see pins.c)
-  initializePins();
-
-  // Initialize system clocks
-  cpu_init();
-
-  // Start system tick (used for timing, delay, etc)
-  SystemCoreClockUpdate();
-  SysTick_Config(SystemCoreClock / 1000);
-    
-  // Tip from Sony:
-  // Prevents hard-faults when booting from USB
-  delay(50);
-  
-  // Tip from Sony:
-  // Not quite sure, but I believe a pullup on DP enables charging of a device even if
-  // it does not do USB any communication by removing the pre-enum current limit
-  if(digitalRead(USB_CONNECTED)) pinMode(USB_DP, INPUT_PULLUP);
-  
-  // Initialize ADC
-  adc_init();
-
-  // Initialize I2C
-  i2c_init();
-}
+static int8_t analog_shift = 2; 
 
 // Found in sketch (.ino file)
 void setup();
@@ -80,7 +46,7 @@ void loop();
 int main(void) {
 
   // System initialization
-  init();
+  sys_init();
   
   // User initialization
   setup();
@@ -181,6 +147,78 @@ void fatalError(char *error, ...) {
   }
 }
 
+// Reads analog input
+uint16_t analogRead(const PinDef_t *pin) {
+  uint16_t value;
+  if(pin == LIGHT_SENSOR) {
+    value = adc_lightsensor();
+  } else if(pin == BATTERY_VOLTAGE) {
+    value = adc_battery();
+  } else {
+    value = 0;
+  }
+  if(analog_shift < 0) {
+    value <<= -analog_shift;
+  } else {
+    value >>= analog_shift;
+  }
+  return value;
+}
+
+// Set analogRead resolution
+void analogReadResolution(int8_t bits) {
+  analog_shift = 12 - bits;
+}
+
+// Writes analog output
+void analogWrite(const PinDef_t *pin, uint16_t value) {
+  // Dummy
+}
+// Set analogWrite resolution
+void analogWriteResolution(int8_t bits) {
+  // Dummy
+}
+
+// Uptime in microseconds (worthless hack)
+uint32_t micros() {  
+  return (millis() & 0x3FFFFF) * 1000;
+}
+
+// Delay microseconds (worthless hack)
+void delayMicroseconds(uint32_t us) {
+  delay((us + 999) / 1000);
+}
+
+// Seeds the random number generator
+void randomSeed(unsigned int seed) {
+  if(seed != 0) srand(seed);
+}
+
+// Return random number between 0 and howbig
+long random(long howbig) {
+  if(howbig == 0) return 0;
+  return rand() % howbig;
+}
+
+// Return random number between howsmall and howbig
+long random(long howsmall, long howbig) {
+  if (howsmall >= howbig) return howsmall;
+  long diff = howbig - howsmall;
+  return random(diff) + howsmall;
+}
+
+// Maps a value from range:in to range:out
+long map(long x, long in_min, long in_max, long out_min, long out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+// TODO: We're in C-mode here, so I had to remove the makeWord(int)
+unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8) | l; }
+
 // Include the sketch
 #pragma GCC diagnostic ignored "-Wwrite-strings"
+<<<<<<< HEAD:src/main.cpp
 #include "../sketch/ssw.ino"
+=======
+#include "../../sketch/ssw.ino"
+>>>>>>> upstream/master:src/Arduino/Arduino.cpp
