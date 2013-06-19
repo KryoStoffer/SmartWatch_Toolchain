@@ -34,13 +34,15 @@ OBJDIR = $(OBJDIRBASE)
 TARGET = $(OBJDIR)/firmware
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(SRCDIR)/driver_display.c \
+SRC = $(SRCDIR)/Arduino.c \
+      $(SRCDIR)/driver_display.c \
       $(SRCDIR)/driver_i2c.c \
       $(SRCDIR)/driver_power.c \
       $(SRCDIR)/driver_adc.c \
       $(SRCDIR)/driver_rtc.c \
+      $(SRCDIR)/driver_touch.c \
+      $(SRCDIR)/driver_accel.c \
       $(SRCDIR)/driver_usb.c \
-      $(SRCDIR)/pins.c \
       $(SRCDIR)/libstm32f2/stm32f2xx_adc.c       \
       $(SRCDIR)/libstm32f2/stm32f2xx_can.c       \
       $(SRCDIR)/libstm32f2/stm32f2xx_crc.c       \
@@ -256,6 +258,8 @@ all: sizebefore touchmain build sizeafter
 
 sketch: all
 
+happen: program
+
 # Force recompile of src/main.cpp
 touchmain:
 	@$(REMOVE) $(OBJDIR)/src/main.o $@
@@ -345,6 +349,6 @@ $(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src 2>/dev/
 $(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/VCP 2>/dev/null)
 
 # Listing of phony targets.
-.PHONY : all begin finish end sizebefore sizeafter build elf hex eep lss sym clean clean_list program touchmain
+.PHONY : all begin finish end sizebefore sizeafter build elf hex eep lss sym clean clean_list program touchmain happen
 
 
