@@ -26,6 +26,11 @@ void setup() {
     // RTC has lost power, we need to set a new time
     DateTime.setDateTime(13, 05, 03, 6, 20, 41, 00);
   }
+  usb_debug1[0]=0;
+  usb_debug2[0]=0;
+  usb_debug3[0]=0;
+  usb_debug4[0]=0;
+  setupUSB();
 }
 
 
@@ -34,7 +39,7 @@ void loop() {
 
   // Clear before printing
   OLED.setCursor(0, 32);
-
+/* USB Comunication seems to not work while this is enabled.
   // USB connected status
   OLED.print("USB connected: ");
   OLED.println((char*)(Battery.canCharge() ? "YES" : "NO "));
@@ -44,13 +49,20 @@ void loop() {
   // PMU charging status
   OLED.print("PMU charging:  ");
   OLED.println((char*)(Battery.isCharging() ? "YES" : "NO "));
+*/
 
-  OLED.setCursor(0, 56);
+  OLED.setCursor(0, 32);
 
   // Battery level as volts
   sprintf(text, "Battery: %.2fV", ((float)Battery.readMilliVolts()) / 1000.0);
   OLED.println(text);
+  OLED.println("usb_debug:");
+  OLED.println(usb_debug1);
+  OLED.println(usb_debug2);
+  OLED.println(usb_debug3);
+  OLED.println(usb_debug4);
 
+  /*
   // Light sensor level as %
   sprintf(text, "Sensor:  %u%%  ", (LightSensor.readRaw() * 100) / 4095);
   OLED.println(text);
@@ -76,9 +88,11 @@ void loop() {
   OLED.println(text);
 
   // Delay in low speed mode
+
   CPU.setSpeed(CPU_LS);
   delay(100);
   CPU.setSpeed(CPU_HS);
+  */
 
   // Shut down if button is pressed
   if(digitalRead(BUTTON)) standardShutdown();

@@ -25,6 +25,7 @@
 
 
 #define USE_USB_OTG_FS
+#define VBUS_SENSING_ENABLED
 #define     __IO    volatile
 typedef unsigned long		uint32_t;
 //typedef unsigned int		u32;
@@ -32,8 +33,13 @@ typedef unsigned short	uint16_t;
 typedef unsigned short	u16;
 typedef unsigned char		uint8_t;
 typedef unsigned char		u8;
+
+char	usb_debug1[32];
+char	usb_debug2[32];
+char	usb_debug3[32];
+char	usb_debug4[32];
 /* Includes ------------------------------------------------------------------*/
-//#include "stm32f4xx.h"
+//#include "stm32f2xx.h"
 
 
 /** @addtogroup USB_OTG_DRIVER

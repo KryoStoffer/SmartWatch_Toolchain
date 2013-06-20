@@ -28,6 +28,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usb_core.h"
 #include "usb_bsp.h"
+#include "driver_usb.h"
+#include <stdio.h>
+
 
 
 /** @addtogroup USB_OTG_DRIVER
@@ -206,6 +209,20 @@ void *USB_OTG_ReadPacket(USB_OTG_CORE_HANDLE *pdev,
   for ( i = 0; i < count32b; i++, dest += 4 )
   {
     *(__packed uint32_t *)dest = USB_OTG_READ_REG32(fifo);
+    switch (i) {
+	    case 0:
+		    sprintf(usb_debug1,"%08lx",*(__packed uint32_t *)dest);
+		    break;
+	    case 1:
+		    sprintf(usb_debug2,"%08lx",*(__packed uint32_t *)dest);
+		    break;
+	    case 2:
+		    sprintf(usb_debug3,"%08lx",*(__packed uint32_t *)dest);
+		    break;
+	    case 3:
+		    sprintf(usb_debug4,"%08lx",*(__packed uint32_t *)dest);
+		    break;
+    }
     
   }
   return ((void *)dest);
@@ -1961,7 +1978,7 @@ void USB_OTG_ActiveRemoteWakeup(USB_OTG_CORE_HANDLE *pdev)
       if(pdev->cfg.low_power)
       {
         /* un-gate USB Core clock */
-        power.d32 = USB_OTG_READ_REG32(&pdev->regs.PCGCCTL);
+        power.d32 = USB_OTG_READ_REG32(pdev->regs.PCGCCTL);
         power.b.gatehclk = 0;
         power.b.stoppclk = 0;
         USB_OTG_WRITE_REG32(pdev->regs.PCGCCTL, power.d32);
@@ -1995,7 +2012,7 @@ void USB_OTG_UngateClock(USB_OTG_CORE_HANDLE *pdev)
     if(dsts.b.suspsts == 1)
     {
       /* un-gate USB Core clock */
-      power.d32 = USB_OTG_READ_REG32(&pdev->regs.PCGCCTL);
+      power.d32 = USB_OTG_READ_REG32(pdev->regs.PCGCCTL);
       power.b.gatehclk = 0;
       power.b.stoppclk = 0;
       USB_OTG_WRITE_REG32(pdev->regs.PCGCCTL, power.d32);

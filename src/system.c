@@ -4,6 +4,7 @@
 #include "driver_adc.h"
 #include "driver_i2c.h"
 #include "driver_power.h"
+#include "driver_usb.h"
 
 #define SET 1
 #define CLEAR 0
