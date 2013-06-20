@@ -203,8 +203,4 @@ unsigned int makeWord(unsigned char h, unsigned char l) { return (h << 8) | l; }
 
 // Include the sketch
 #pragma GCC diagnostic ignored "-Wwrite-strings"
-<<<<<<< HEAD:src/main.cpp
-#include "../sketch/ssw.ino"
-=======
 #include "../../sketch/ssw.ino"
->>>>>>> upstream/master:src/Arduino/Arduino.cpp
