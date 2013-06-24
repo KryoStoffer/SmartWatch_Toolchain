@@ -15,10 +15,7 @@ DEFINECPU = $(MCU_OPTIONS) -DMCU_$(MCU) -D$(MCU_FAMILY) -fno-exceptions
 EXTRACPPFLAGS = -fno-rtti
 RUNTIMELIB = 
 EXTRAINCDIRS = $(SRCDIR) $(SRCDIR)/libstm32f2 \
-	       $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/inc \
-	       $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Class/cdc/inc \
-	       $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/inc \
-	       $(SRCDIR)/libstm32f2/VCP
+	       $(SRCDIR)/libstm32f2/USB
 
 
 # Output format. (can be srec, ihex, binary)
@@ -76,17 +73,17 @@ SRC = $(SRCDIR)/system.c \
       $(SRCDIR)/libstm32f2/stm32f2xx_wwdg.c      \
       $(SRCDIR)/libstm32f2/system_stm32f2xx.c    \
       $(SRCDIR)/libstm32f2/syscalls.c            \
-      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src/usbd_core.c \
-      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src/usbd_ioreq.c \
-      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src/usbd_req.c \
-      $(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Class/cdc/src/usbd_cdc_core.c \
-      $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src/usb_dcd.c \
-      $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src/usb_core.c \
-      $(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src/usb_dcd_int.c \
-      $(SRCDIR)/libstm32f2/VCP/usb_bsp.c \
-      $(SRCDIR)/libstm32f2/VCP/usbd_cdc_vcp.c \
-      $(SRCDIR)/libstm32f2/VCP/usbd_desc.c \
-      $(SRCDIR)/libstm32f2/VCP/usbd_usr.c
+      $(SRCDIR)/libstm32f2/USB/usbd_core.c \
+      $(SRCDIR)/libstm32f2/USB/usbd_ioreq.c \
+      $(SRCDIR)/libstm32f2/USB/usbd_req.c \
+      $(SRCDIR)/libstm32f2/USB/usbd_cdc_core.c \
+      $(SRCDIR)/libstm32f2/USB/usb_dcd.c \
+      $(SRCDIR)/libstm32f2/USB/usb_core.c \
+      $(SRCDIR)/libstm32f2/USB/usb_dcd_int.c \
+      $(SRCDIR)/libstm32f2/USB/usb_bsp.c \
+      $(SRCDIR)/libstm32f2/USB/usbd_cdc_vcp.c \
+      $(SRCDIR)/libstm32f2/USB/usbd_desc.c \
+      $(SRCDIR)/libstm32f2/USB/usbd_usr.c
 
 
 LIBDIR     = libraries
@@ -254,7 +251,7 @@ ALL_CPPFLAGS = $(DEFINECPU) -I. -x c++ $(CPPFLAGS) $(EXTRACPPFLAGS) $(GENDEPFLAG
 ALL_ASFLAGS = $(DEFINECPU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 # Default target.
-all: sizebefore touchmain build sizeafter
+all: sizebefore touchmain create_dir build sizeafter
 
 sketch: all
 
@@ -275,7 +272,7 @@ lss: $(TARGET).lss
 sym: $(TARGET).sym
 lib: $(LIBNAME)
 
-program:
+program: build
 	@echo $(MSG_FLASH) $@
 	@$(DFUUTIL) -d 0FCE:F0FA -a 0 -i 0 -s 0x08040000 -D $(TARGET).bin $@
 	@$(DFUUTIL) -d 0FCE:F0FA -a 0 -i 0 -s 0x080FFFFC -D magic.bin $@
@@ -316,7 +313,7 @@ sizeafter:
 .PRECIOUS : $(OBJ)
 %.elf: $(OBJ) $(RUNTIMELIB)
 	@echo $(MSG_LINKING) $@
-	@$(CC) $(ALL_CFLAGS) $^ $(RUNTIMELIB) --output $@ $(LDFLAGS)
+	$(CC) $(ALL_CFLAGS) $^ $(RUNTIMELIB) --output $@ $(LDFLAGS)
 
 # Compile: create object files from C source files.
 $(OBJDIR)/%.o : %.c
@@ -340,16 +337,14 @@ clean_list :
 	@echo $(MSG_CLEANING)
 	-$(REMOVEDIR) $(OBJDIRBASE)
 
-# Create object files directory
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR) 2>/dev/null)
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2 2>/dev/null)
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Core/src 2>/dev/null)
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_Device_Library/Class/cdc/src 2>/dev/null)
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/STM32_USB_OTG_Driver/src 2>/dev/null)
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/VCP 2>/dev/null)
-$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/Arduino 2>/dev/null)
+create_dir :
+	# Create object files directory
+	$(shell mkdir -p $(OBJDIR)/$(SRCDIR) 2>/dev/null)
+	$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2 2>/dev/null)
+	$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/libstm32f2/USB 2>/dev/null)
+	$(shell mkdir -p $(OBJDIR)/$(SRCDIR)/Arduino 2>/dev/null)
 
 # Listing of phony targets.
-.PHONY : all begin finish end sizebefore sizeafter build elf hex eep lss sym clean clean_list program touchmain happen
+.PHONY : all begin finish end sizebefore sizeafter build elf hex eep lss sym clean clean_list create_dir program touchmain happen
 
 

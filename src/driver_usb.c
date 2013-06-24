@@ -1,24 +1,17 @@
 #include "usbd_cdc_core.h"
 #include "usbd_usr.h"
 #include "usbd_desc.h"
+#include "usb_defines.h"
 #include "driver_usb.h"
-#include <Arduino.h>
-//#include <rccF2.h>
 #include <usbd_cdc_vcp.h>
 
 USB_OTG_CORE_HANDLE  USB_OTG_dev;
-
-void delay_us(uint32_t volatile us) {
-	us *= 12000;
-	while(us--);
-}
 
 void setupUSB (void) {
     #define USB_DISC_DEV         GPIOD
     #define USB_DISC_PIN         11
 
   //digitalWrite(CONNECT_USB,HIGH);
-  delay(200);
 
   /* setup the apb clock for USB */
   //RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_OTG_FS, ENABLE) ;
@@ -89,7 +82,23 @@ RESULT usbPowerOff(void) {
 void usbDsbISR(void) {};
 
 #include "usb_dcd_int.h"
-__attribute__ ((interrupt ("IRQ")))
-void OTG_FS_IRQHandler(void) {
-  USBD_OTG_ISR_Handler (&USB_OTG_dev);
+
+	__attribute__ ((interrupt ("IRQ")))
+void OTG_FS_WKUP_IRQHandler(void)
+{
+	if(USB_OTG_dev.cfg.low_power)
+	{
+		*(uint32_t *)(0xE000ED10) &= 0xFFFFFFF9 ;
+		SystemInit();
+		USB_OTG_UngateClock(&USB_OTG_dev);
+	}
+	EXTI_ClearITPendingBit(EXTI_Line18);
 }
+
+	__attribute__ ((interrupt ("IRQ")))
+void OTG_FS_IRQHandler(void)
+{
+	USBD_OTG_ISR_Handler (&USB_OTG_dev);
+}
+
+

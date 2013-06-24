@@ -182,6 +182,7 @@ uint32_t DCD_EP_Open(USB_OTG_CORE_HANDLE *pdev ,
   {
     ep->data_pid_start = 0;
   }
+  //sprintf(usb_debug4,"Calling USB_OTG_EPActivate ep:%u",ep->num);
   USB_OTG_EPActivate(pdev , ep );
   return 0;
 }

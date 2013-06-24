@@ -113,7 +113,6 @@ USBD_Usr_cb_TypeDef USR_cb =
 */
 void USBD_USR_Init(void)
 {   
-	sprintf(usb_debug4,"USBD_USR_Init");
   /* Setup SysTick Timer for 40 msec interrupts 
   This interrupt is used to probe the joystick */
 #if 0
@@ -139,7 +138,6 @@ void USBD_USR_DeviceReset(uint8_t speed )
      break;
 
   case USB_OTG_SPEED_FULL: 
-	sprintf(usb_debug4,"Full Speed");
      break;
  default:
      break;
@@ -156,7 +154,6 @@ void USBD_USR_DeviceReset(uint8_t speed )
 */
 void USBD_USR_DeviceConfigured (void)
 {
-	sprintf(usb_debug4,"USBD_USR_DeviceConfigured");
 }
 
 
@@ -168,7 +165,6 @@ void USBD_USR_DeviceConfigured (void)
 */
 void USBD_USR_DeviceConnected (void)
 {
-	sprintf(usb_debug4,"USBD_USR_DeviceConnected");
 }
 
 
@@ -180,7 +176,6 @@ void USBD_USR_DeviceConnected (void)
 */
 void USBD_USR_DeviceDisconnected (void)
 {
-	sprintf(usb_debug4,"USBD_USR_DeviceDisconnected");
 }
 
 /**
@@ -191,7 +186,6 @@ void USBD_USR_DeviceDisconnected (void)
 */
 void USBD_USR_DeviceSuspended(void)
 {
-	sprintf(usb_debug4,"USBD_USR_DeviceSuspended");
   /* Users can do their application actions here for the USB-Reset */
 }
 
@@ -204,7 +198,6 @@ void USBD_USR_DeviceSuspended(void)
 */
 void USBD_USR_DeviceResumed(void)
 {
-	sprintf(usb_debug4,"USBD_USR_DeviceResumed");
   /* Users can do their application actions here for the USB-Reset */
 }
 

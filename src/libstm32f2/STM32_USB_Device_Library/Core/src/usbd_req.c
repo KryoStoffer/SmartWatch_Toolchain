@@ -29,6 +29,8 @@
 #include "usbd_req.h"
 #include "usbd_ioreq.h"
 #include "usbd_desc.h"
+#include "driver_usb.h"
+#include <stdio.h>
 
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -238,8 +240,10 @@ USBD_Status  USBD_StdEPReq (USB_OTG_CORE_HANDLE  *pdev, USB_SETUP_REQ  *req)
   
   uint8_t   ep_addr;
   USBD_Status ret = USBD_OK; 
-  
+
   ep_addr  = LOBYTE(req->wIndex);   
+
+  sprintf(usb_debug3,"USBD_StdEPReq ep_addr %u",ep_addr);
   
   switch (req->bRequest) 
   {

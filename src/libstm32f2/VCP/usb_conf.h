@@ -107,13 +107,15 @@ char	usb_debug4[32];
 /****************** USB OTG FS CONFIGURATION **********************************/
 #ifdef USB_OTG_FS_CORE
  #define RX_FIFO_FS_SIZE                          128
- #define TX0_FIFO_FS_SIZE                          64
+ #define TX0_FIFO_FS_SIZE                          32
  #define TX1_FIFO_FS_SIZE                         128
- #define TX2_FIFO_FS_SIZE                          0
- #define TX3_FIFO_FS_SIZE                          0
-
+ #define TX2_FIFO_FS_SIZE                          32 
+ #define TX3_FIFO_FS_SIZE                           0
  //#define USB_OTG_FS_LOW_PWR_MGMT_SUPPORT
  //#define USB_OTG_FS_SOF_OUTPUT_ENABLED
+ #define TXH_NP_HS_FIFOSIZ                         96
+ #define TXH_P_HS_FIFOSIZ                          96
+ //
 #endif
 
 /****************** USB OTG MODE CONFIGURATION ********************************/

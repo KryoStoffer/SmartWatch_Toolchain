@@ -10,7 +10,7 @@
 #include "../driver_display.h"
 #include "../driver_power.h"
 #include "../driver_touch.h"
-#include "../driver_usb.h"
+#include "driver_usb.h"
  
 // Include our Arduino style C++ objects
 // This should eventually be moved to the makefile

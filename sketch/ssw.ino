@@ -30,6 +30,8 @@ void setup() {
   usb_debug2[0]=0;
   usb_debug3[0]=0;
   usb_debug4[0]=0;
+  usb_debug5[0]=0;
+  usb_debug6[0]=0;
   setupUSB();
 }
 
@@ -61,6 +63,8 @@ void loop() {
   OLED.println(usb_debug2);
   OLED.println(usb_debug3);
   OLED.println(usb_debug4);
+  OLED.println(usb_debug5);
+  OLED.println(usb_debug6);
 
   /*
   // Light sensor level as %

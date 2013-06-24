@@ -1,5 +1,5 @@
-#ifndef _USBF4_H_
-#define _USBF4_H_
+#ifndef _DRIVER_USB_H_
+#define _DRIVER_USB_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,4 +48,4 @@ void OTG_FS_IRQHandler(void);
 } // extern "C"
 #endif
 
-#endif // _USB_H_
+#endif // _DRIVER_USB_

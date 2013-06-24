@@ -28,6 +28,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "usb_dcd_int.h"
 #include <stm32f2xx.h>
+#include "driver_usb.h"
+#include <stdio.h>
 /** @addtogroup USB_OTG_DRIVER
 * @{
 */
@@ -219,6 +221,9 @@ uint32_t USBD_OTG_ISR_Handler (USB_OTG_CORE_HANDLE *pdev)
     {
       return 0;
     }
+    static uint32_t debug;
+    debug|=gintr_status.d32;
+    sprintf(usb_debug3,"Inter %08lx",debug);
     
     if (gintr_status.b.outepintr)
     {
@@ -496,6 +501,9 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev)
   USB_OTG_DOEPINTn_TypeDef  doepint;
   USB_OTG_DEPXFRSIZ_TypeDef  deptsiz;
   uint32_t epnum = 0;
+
+  sprintf(usb_debug3,"DCD_HandleOutEP_ISR");
+        
   
   doepint.d32 = 0;
   
@@ -543,7 +551,6 @@ static uint32_t DCD_HandleOutEP_ISR(USB_OTG_CORE_HANDLE *pdev)
       /* Setup Phase Done (control EPs) */
       if ( doepint.b.setup )
       {
-        
         /* inform the upper layer that a setup packet is available */
         /* SETUP COMPLETE */
         USBD_DCD_INT_fops->SetupStage(pdev);
@@ -596,6 +603,7 @@ static uint32_t DCD_HandleRxStatusQueueLevel_ISR(USB_OTG_CORE_HANDLE *pdev)
   
   /* Get the Status from the top of the FIFO */
   status.d32 = USB_OTG_READ_REG32( &pdev->regs.GREGS->GRXSTSP );
+  //sprintf(usb_debug4,"GRXSTSP %08lx",status.d32);
   
   ep = &pdev->dev.out_ep[status.b.epnum];
   
@@ -614,6 +622,7 @@ static uint32_t DCD_HandleRxStatusQueueLevel_ISR(USB_OTG_CORE_HANDLE *pdev)
   case STS_XFER_COMP:
     break;
   case STS_SETUP_COMP:
+    sprintf(usb_debug4,"STS_SETUP_COMP");
     break;
   case STS_SETUP_UPDT:
     /* Copy the setup packet received in FIFO into the setup buffer in RAM */

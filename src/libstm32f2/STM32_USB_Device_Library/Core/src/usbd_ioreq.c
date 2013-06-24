@@ -27,6 +27,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_ioreq.h"
+#include "driver_usb.h"
+#include <stdio.h>
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
   * @{
@@ -96,6 +98,7 @@ USBD_Status  USBD_CtlSendData (USB_OTG_CORE_HANDLE  *pdev,
                                uint8_t *pbuf,
                                uint16_t len)
 {
+  sprintf(usb_debug3,"USBD_CtlSendData dev_state: %u", pdev->dev.device_state);
   USBD_Status ret = USBD_OK;
   
   pdev->dev.in_ep[0].total_data_len = len;
